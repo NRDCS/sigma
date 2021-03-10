@@ -1,0 +1,43 @@
+title: Zeoticus 2.0 Ransomware Detection
+description: Zeoticus ransomware first appeared for sale in various underground forums and markets in early 2020. Initially, the ransomware was offered as a complete custom build for an undisclosed fee. The ransomware is currently Windows-specific and, according to the developers, functions on all "supported versions of Windows".
+author: Osman Demir
+tags:
+- attack.Impact
+- attack.T1486
+status: stable
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  condition: selection
+  selection:
+    Image|endswith:
+    - '\cmd.exe'
+    CommandLine|contains|all:
+    - 'taskkill'
+    - 'IM'
+    - 'msftesql.exe'
+    - 'sqlservr.exe'
+    - 'onenote.exe'
+    - 'outlook.exe'
+    - 'mydesktopservice.exe'
+---
+logsource:
+  product: windows
+  category: registry_event
+detection:
+  condition: selection
+  selection:
+    TargetObject|contains:
+    - '\Windows\CurrentVersion\Run'
+    Details|contains:
+    - '\Windows\ween_satan.exe'
+fields:
+- Image
+- CommandLine
+- TargetObject
+falsepositives:
+- unlikely
+level: high
+reference:
+- https://labs.sentinelone.com/zeoticus-2-0-ransomware-with-no-c2-required/
